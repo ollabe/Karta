@@ -1,0 +1,231 @@
+﻿<html lang="sv-se">
+<head>
+    <meta charset="UTF-8
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Test</title>
+    <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
+    <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+
+
+    <style>
+        #myModal {
+            position: fixed;
+            z-index: 999;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+            #myModal div {
+                width: 100%;
+                max-width: 400px;
+                max-height: 100%;
+                overflow: auto;
+                padding: 30px 24px 24px;
+                background: #fff;
+                position: relative;
+            }
+
+                #myModal div span {
+                    position: absolute;
+                    top: 0;
+                    right: 0;
+                    font-size: 30px;
+                    font-weight: bold;
+                    cursor: pointer;
+                    width: 46px;
+                    padding: 10px;
+                }
+
+                #myModal div li {
+                    margin-bottom: 9px;
+                }
+
+        #sliderImg {
+            position: absolute;
+            left: 50%;
+            top: 0px;
+            background-color: #d3d3d3;
+            width: 5px;
+            height: 100%;
+            z-index: 999;
+            display: none;
+        }
+
+            #sliderImg:hover {
+                cursor: ew-resize;
+            }
+
+        #slidermodel {
+            position: absolute;
+            left: 50%;
+            top: 0px;
+            background-color: #d3d3d3;
+            width: 5px;
+            height: 100%;
+            z-index: 999;
+            display: none;
+        }
+
+            #slidermodel:hover {
+                cursor: ew-resize;
+            }
+
+        button {
+            padding: 7px;
+            border: none;
+            border-radius: 75%;
+        }
+    </style>
+</head>
+<body>
+
+
+
+
+
+    </div>
+
+    <div id="cesiumContainer" class="fullSize">
+  
+    </div>
+
+    <script>
+        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxOTA2NDkzMS0yZmNiLTQ2MjEtOGZmNC1mOWY5MzZkOTZhMTkiLCJpZCI6MjY0NDAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1ODc3MzA4NjV9.U36Gv67LLNRNlrUhOsrJPmGHchC_F9veDISMTc-evqc';
+
+        var viewer = new Cesium.Viewer('cesiumContainer', {
+            shadows: false,
+            geocoder: false,
+            animation: false,
+            timeline: false,
+            scene3DOnly: true,
+            enablePickFeatures: true,
+            baseLayerPicker: false,
+            enableLook: false,
+            enableTranslate: false,
+            homeButton: false,
+            fullscreenButton: false,
+            navigationHelpButton: false,
+            shouldAnimate: true,
+            automaticallyTrackDataSourceClocks: false,
+            orderIndependentTranslucency: false,
+            depthTestAgainstTerrain: true,
+            vrButton: true,
+        
+        });
+
+        //create variable for scene camera
+        var camera = viewer.scene.camera;
+
+
+
+       //remove moon
+        viewer.scene.moon.destroy();
+        viewer.scene.moon = undefined;
+
+
+        //shadow settings
+        var shadowMap = viewer.shadowMap;
+        shadowMap.maximumDistance = 3000;
+        shadowMap.size = 4096;
+        shadowMap.darkness = 0.7;
+
+        //attach light to camera
+        function cameraLight() {
+            viewer.scene.light = new Cesium.DirectionalLight({
+                direction: new Cesium.Cartesian3()
+            });
+            viewer.scene.preRender.addEventListener(function (scene, time) {
+                viewer.scene.light.direction = camera.directionWC;
+            });
+        }
+        onload = cameraLight;
+
+
+		function flyToLocation() { //cesiums funktion för att flyga till en plats
+			navigator.geolocation.getCurrentPosition(fly);
+			console.log('Begärt plats');
+			// Create callback for browser's geolocation
+			function fly(position) {
+				viewer.camera.flyTo({
+					destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, (position.coords.altitude + 5000)), // postion.coords.XXXX är den position som webbläsaren läser ut från GPS:en
+					//destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, position.coords.altitude),
+					orientation: {
+						heading: Cesium.Math.toRadians(position.coords.heading),
+						pitch: Cesium.Math.toRadians(-90),
+					}
+				});
+
+
+				// Nedan är cesiums funktion för att skapa en punkt (i detta fall på GPS:ens plats)
+				viewer.entities.removeById('Här är du'); // ett unikt id för punkten så vi kan "ta bort gammal och sätta in ny" här raderas "gamla" 
+
+
+				viewer.entities.add({
+					id: 'Här är du', // ett unikt id för punkten så vi kan "ta bort gammal och sätta in ny" här skapas nya
+					description: "test",
+					position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2), //platsen för punkten, från webbläsarens GPS:koppling
+					point: {
+						show: true, // default
+						color: Cesium.Color.GREEN, // default: WHITE
+						pixelSize: 20, // default: 1
+						outlineColor: Cesium.Color.BLUE, // default: BLACK
+						outlineWidth: 3, // default: 0
+						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+					},
+				});
+				
+	
+						
+				viewer.entities.add({
+						id:"2000",
+						description:"2000",
+                        position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
+                        ellipsoid: {
+                            radii: new Cesium.Cartesian3(2000,2000,2000),
+                            material: Cesium.Color.RED.withAlpha(0.2),
+                            outline: false,
+                            outlineColor: Cesium.Color.BLACK,
+							
+                        },                      
+                    });
+					
+				viewer.entities.add({
+						id:"3500",
+						description:"3500",
+                        position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
+                        ellipsoid: {
+                            radii: new Cesium.Cartesian3(3500,3500,3500),
+                            material: Cesium.Color.ORANGE.withAlpha(0.2),
+                            outline: false,
+                            outlineColor: Cesium.Color.BLACK,
+						
+                        },                      
+                    });	
+
+			}
+		}
+
+		flyToLocation();
+
+
+            // GPS POSITITON
+
+		
+		
+
+		
+		
+    </script>
+    
+   
+
+
+</body>
+</html>
+
