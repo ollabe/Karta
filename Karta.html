@@ -181,12 +181,12 @@
 				
 	
 						
-				viewer.entities.add({
+						viewer.entities.add({
 						id:"2000",
 						description:"2000",
                         position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
                         ellipsoid: {
-                            radii: new Cesium.Cartesian3(2000,2000,2000),
+                            radii: new Cesium.Cartesian3(2000,2000,75),
                             material: Cesium.Color.RED.withAlpha(0.2),
                             outline: false,
                             outlineColor: Cesium.Color.BLACK,
@@ -194,18 +194,18 @@
                         },                      
                     });
 					
-				viewer.entities.add({
+						viewer.entities.add({
 						id:"3500",
 						description:"3500",
                         position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
                         ellipsoid: {
-                            radii: new Cesium.Cartesian3(3500,3500,3500),
+                            radii: new Cesium.Cartesian3(3500,3500,70),
                             material: Cesium.Color.ORANGE.withAlpha(0.2),
                             outline: false,
                             outlineColor: Cesium.Color.BLACK,
 						
                         },                      
-                    });	
+                    });
 
 			}
 		}
@@ -227,6 +227,7 @@
 
 </body>
 </html>
+
 
 
 
