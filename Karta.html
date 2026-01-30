@@ -149,10 +149,11 @@
 
 		function flyToLocation() { //cesiums funktion för att flyga till en plats
 			navigator.geolocation.getCurrentPosition(fly);
+			console.log('Begärt plats');
 			// Create callback for browser's geolocation
 			function fly(position) {
 				viewer.camera.flyTo({
-					destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, (position.coords.altitude + 7500)), // postion.coords.XXXX är den position som webbläsaren läser ut från GPS:en
+					destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, (position.coords.altitude + 5000)), // postion.coords.XXXX är den position som webbläsaren läser ut från GPS:en
 					//destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, position.coords.altitude),
 					orientation: {
 						heading: Cesium.Math.toRadians(position.coords.heading),
@@ -163,7 +164,8 @@
 
 				// Nedan är cesiums funktion för att skapa en punkt (i detta fall på GPS:ens plats)
 				viewer.entities.removeById('Här är du'); // ett unikt id för punkten så vi kan "ta bort gammal och sätta in ny" här raderas "gamla" 
-
+				viewer.entities.removeById('2000');
+				viewer.entities.removeById('3500');
 
 				viewer.entities.add({
 					id: 'Här är du', // ett unikt id för punkten så vi kan "ta bort gammal och sätta in ny" här skapas nya
@@ -181,7 +183,7 @@
 				
 	
 						
-						viewer.entities.add({
+				viewer.entities.add({
 						id:"2000",
 						description:"2000",
                         position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
@@ -194,7 +196,7 @@
                         },                      
                     });
 					
-						viewer.entities.add({
+				viewer.entities.add({
 						id:"3500",
 						description:"3500",
                         position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
@@ -205,12 +207,14 @@
                             outlineColor: Cesium.Color.BLACK,
 						
                         },                      
-                    });
+                    });	
 
 			}
 		}
-
-		flyToLocation();
+		
+		
+		setInterval(flyToLocation(), 10000);
+		
 
 
             // GPS POSITITON
@@ -227,6 +231,7 @@
 
 </body>
 </html>
+
 
 
 
