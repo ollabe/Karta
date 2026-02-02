@@ -251,7 +251,7 @@
 		// Example: Starting at (100, 100), move 50 units at 45 degrees
 		const startPoint = { x: position.coords.longitude, y: position.coords.latitude };
 		const offsetPoint = calculateOffset(startPoint.x, startPoint.y, 1, 90-270); // 270 är vinkeln ersätt med textparamter 90 är startvärdet för att peka 0 mot norr, därifrån subtraheras kompassvinkeln
-
+		}
 
 		const yellowLine = viewer.entities.add({
 		  name: "Yellow dashed line with a dash pattern.",
@@ -268,7 +268,7 @@
 		});
 
 		console.log(offsetPoint); 
-		}
+		
 
 		
 	// Riskvinkel
@@ -285,6 +285,7 @@
 
 </body>
 </html>
+
 
 
 
