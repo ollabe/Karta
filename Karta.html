@@ -234,7 +234,8 @@
 
 		function calculateOffset(x, y, distance, angleInDegrees) {
 		  // Convert degrees to radians (Math functions use radians)
-		  
+		  navigator.geolocation.getCurrentPosition(position);
+			
 		  const radians = (angleInDegrees * Math.PI) / 180;
 		  
 		  // Calculate new coordinates
@@ -282,6 +283,7 @@
 
 </body>
 </html>
+
 
 
 
