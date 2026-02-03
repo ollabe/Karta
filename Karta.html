@@ -105,7 +105,7 @@
 
 		<br />
         <div class="slidecontainer" style="color: #fff;">
-            <input type="number" min="0" max="360" value="0" class="slider" id="myRange">
+            <input type="number" min="0" max="360" class="slider" id="myRange">
             <p>Kompassriktning: <span id="demo"></span> </p>
 			<button onclick="myFunction()" style="
 			color: red;
@@ -276,7 +276,7 @@
 		  name: "Yellow dashed line with a dash pattern.",
 		  polyline: {
 			positions: Cesium.Cartesian3.fromDegreesArrayHeights([
-			  startPoint.x, startPoint.y, 150, offsetPoint.x, offsetPoint.y, 150,
+			  startPoint.x, startPoint.y, 10, offsetPoint.x, offsetPoint.y, 10,
 			]),
 			width: 5,
 			material: new Cesium.PolylineDashMaterialProperty({
@@ -293,3 +293,4 @@
     </script>    
 </body>
 </html>
+
