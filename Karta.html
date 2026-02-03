@@ -1,4 +1,4 @@
-﻿<html lang="sv-se">
+<html lang="sv-se">
 <head>
     <meta charset="UTF-8
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -81,20 +81,47 @@
             border: none;
             border-radius: 75%;
         }
+		
+		#sidebar {
+		position: fixed;
+		bottom: 0;
+		left: 0;
+		height: 15%;
+		width: 100%;
+		overflow: auto;
+		background: #fff;
+		z-index: 10;
+		}
+		
+		p{color:black;}
+		
+		#myRange {
+		width:50%;
+		height:30%}			
     </style>
 </head>
 <body>
+		<div id="sidebar">
 
+		<br />
+        <div class="slidecontainer" style="color: #fff;">
+            <input type="number" min="0" max="360" value="0" class="slider" id="myRange">
+            <p>Kompassriktning: <span id="demo"></span> </p>
+			<button onclick="myFunction()" style="
+			color: red;
+			position: absolute;
+			right: 0;
+			top: 0;
+			font-size: large;
+			border-radius: 0;
+			">Ladda om sida</button>
+        </div>
+        <br />
+		</div>
 
-
-
-
-    </div>
-
-    <div id="cesiumContainer" class="fullSize">
-  
-    </div>
-
+    <div id="cesiumContainer" class="fullSize">  
+	</div>
+	
     <script>
         Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxOTA2NDkzMS0yZmNiLTQ2MjEtOGZmNC1mOWY5MzZkOTZhMTkiLCJpZCI6MjY0NDAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1ODc3MzA4NjV9.U36Gv67LLNRNlrUhOsrJPmGHchC_F9veDISMTc-evqc';
 
@@ -103,11 +130,12 @@
             geocoder: false,
             animation: false,
             timeline: false,
-            scene3DOnly: true,			
+            scene3DOnly: true,
             enablePickFeatures: true,
             baseLayerPicker: false,
             enableLook: false,
             enableTranslate: false,
+			enableTilt: false,
             homeButton: false,
             fullscreenButton: false,
             navigationHelpButton: false,
@@ -115,19 +143,15 @@
             automaticallyTrackDataSourceClocks: false,
             orderIndependentTranslucency: false,
             depthTestAgainstTerrain: true,
-            vrButton: false,
-        
+            vrButton: true,        
         });
 
         //create variable for scene camera
         var camera = viewer.scene.camera;
 
-
-
        //remove moon
         viewer.scene.moon.destroy();
         viewer.scene.moon = undefined;
-
 
         //shadow settings
         var shadowMap = viewer.shadowMap;
@@ -146,10 +170,8 @@
         }
         onload = cameraLight;
 
-
 		function flyToLocation() { //cesiums funktion för att flyga till en plats
-			navigator.geolocation.getCurrentPosition(fly);
-			console.log('Begärt plats');
+			navigator.geolocation.getCurrentPosition(fly);		
 			// Create callback for browser's geolocation
 			function fly(position) {
 				viewer.camera.flyTo({
@@ -204,58 +226,52 @@
                             radii: new Cesium.Cartesian3(3500,3500,70),
                             material: Cesium.Color.ORANGE.withAlpha(0.2),
                             outline: false,
-                            outlineColor: Cesium.Color.BLACK,
-						
+                            outlineColor: Cesium.Color.BLACK,						
                         },                      
                     });	
-
-			}
+			}					
 		}
 		
-		
-		setInterval(flyToLocation(), 10000);
-		
-
-
-            // GPS POSITITON
-
-
-
-		// Riskvinkel
-		
-		/**
-		 * Calculates a new point based on an origin, distance, and angle.
-		 * @param {number} x - Origin X
-		 * @param {number} y - Origin Y
-		 * @param {number} distance - Distance to offset
-		 * @param {number} angleInDegrees - Direction in degrees
-		 * @returns {object} {x, y} coordinates
-		 */
-
-
+		setInterval(flyToLocation(), 10000);		
+		function myFunction(){location.reload();}
+				
+		var slider = document.getElementById("myRange"); 
+		var output = document.getElementById("demo");
+		output.innerHTML = slider.value;
+			
+		slider.onchange = function() {		
+		output.innerHTML = this.value;
+				
+		if (this.value >= 90) {
+		  formula = -Math.abs(parseInt(this.value)-90);
+		} 
+		else {
+		   formula = -Math.abs(parseInt(-Math.abs(this.value))-270);
+		}
+		var riktn = formula;
+						
 		function calculateOffset(x, y, distance, angleInDegrees) {
 		  // Convert degrees to radians (Math functions use radians)
 			navigator.geolocation.getCurrentPosition(kompass);
-	
-		  
-		 		  	
-		  const radians = (angleInDegrees * Math.PI) / 180;
-		  
+				  		 		  	
+		  const radians = (angleInDegrees * Math.PI) / 180 ;
+		  console.log(riktn);
 		  // Calculate new coordinates
 		  const newX = x + distance * Math.cos(radians);
 		  const newY = y + distance * Math.sin(radians);
-		  
+		
 		  return {
 			x: newX,
 			y: newY
 		  };
+					
+		function kompass(position) {
 		
-			function kompass(position) {
 		// Example: Starting at (100, 100), move 50 units at 45 degrees
 		const startPoint = { x: position.coords.longitude, y: position.coords.latitude };
-		const offsetPoint = calculateOffset(startPoint.x, startPoint.y, 1, 90-270); // 270 är vinkeln ersätt med textparamter 90 är startvärdet för att peka 0 mot norr, därifrån subtraheras kompassvinkeln
-
-
+		
+		const offsetPoint = calculateOffset(startPoint.x, startPoint.y, 1, riktn); // 270 är vinkeln ersätt med textparamter 90 är startvärdet för att peka 0 mot norr, därifrån subtraheras kompassvinkeln
+		
 		const yellowLine = viewer.entities.add({
 		  name: "Yellow dashed line with a dash pattern.",
 		  polyline: {
@@ -269,35 +285,11 @@
 			}),
 		  },
 		});
-
-		console.log(offsetPoint); 
+		console.log(offsetPoint);	
 		}
-		}
-
-
-    calculateOffset();
-		
-	// Riskvinkel
-		
-		
-    </script>
-    
-   
-
-
+		}		
+		calculateOffset();
+		}				
+    </script>    
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
