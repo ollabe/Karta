@@ -105,8 +105,8 @@
 
 		<br />
         <div class="slidecontainer" style="color: #fff;">
-            <input type="number" min="0" max="360" class="slider" id="myRange">
-            <p>Kompassriktning: <span id="demo"></span> </p>
+            <input type="number" min="0" max="400" class="slider" id="myRange">
+            <p>Kompassriktning 0-400: <span id="demo"></span> </p>
 			<button onclick="myFunction()" style="
 			color: red;
 			position: absolute;
@@ -243,10 +243,10 @@
 		output.innerHTML = this.value;
 				
 		if (this.value >= 90) {
-		  formula = -Math.abs(parseInt(this.value)-90);
+		  formula = -Math.abs(parseInt(this.value*0.9)-90);
 		} 
 		else {
-		   formula = -Math.abs(parseInt(-Math.abs(this.value))-270);
+		   formula = -Math.abs(parseInt(-Math.abs(this.value*0.9))-270);
 		}
 		var riktn = formula;
 						
@@ -293,4 +293,5 @@
     </script>    
 </body>
 </html>
+
 
