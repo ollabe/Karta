@@ -86,7 +86,7 @@
 		position: fixed;
 		bottom: 0;
 		left: 0;
-		height: 15%;
+		height: 10%;
 		width: 100%;
 		overflow: auto;
 		background: #fff;
@@ -96,7 +96,7 @@
 		p{color:black;}
 		
 		#myRange {
-		width:50%;
+		width:70%;
 		height:30%}			
     </style>
 </head>
@@ -107,7 +107,8 @@
         <div class="slidecontainer" style="color: #fff;">
             <input type="number" min="0" max="400" class="slider" id="myRange">
             <p>Kompassriktning 0-400: <span id="demo"></span> </p>
-			<button onclick="myFunction()" style="
+			
+			<button onclick="myFunction()""zoom()" style="
 			color: red;
 			position: absolute;
 			right: 0;
@@ -115,6 +116,17 @@
 			font-size: large;
 			border-radius: 0;
 			">Ladda om sida</button>
+			
+			
+			<button onclick="zoom()" style="
+			color: red;
+			position: absolute;
+			right: 10%;
+			top: 0;
+			font-size: large;
+			border-radius: 0;
+			">Fullskärm</button>
+			
         </div>
         <br />
 		</div>
@@ -232,14 +244,14 @@
 			}					
 		}
 		
-		setInterval(flyToLocation(), 10000);		
+			
 		function myFunction(){location.reload();}
 				
 		var slider = document.getElementById("myRange"); 
 		var output = document.getElementById("demo");
 		output.innerHTML = slider.value;
 			
-		slider.onchange = function() {		
+		slider.onchange = function() {	
 		output.innerHTML = this.value;
 				
 		if (this.value >= 90) {
@@ -289,9 +301,12 @@
 		}
 		}		
 		calculateOffset();
-		}				
+		}
+
+		function zoom() {
+         document.body.style.zoom = "100%" 
+        }	
     </script>    
 </body>
 </html>
-
 
