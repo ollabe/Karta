@@ -1,3 +1,4 @@
+
 <html lang="sv-se">
 <head>
     <meta charset="UTF-8
@@ -306,9 +307,28 @@
 		function zoom() {
          document.body.style.zoom = "100%" 
         }
+		
+		
+		function checkLocation() {
+		  navigator.geolocation.getCurrentPosition(
+			(position) => {
+			  if (position.coords.accuracy > 70) {
+				flyToLocation();
+			  } else {
+				setTimeout(checkLocation, 5000);
+			  }
+			},
+			(error) => {
+			  setTimeout(checkLocation, 5000);
+			}
+		  );
+		}
+
+		checkLocation();
+
 
 		
-		const myTimeout = setTimeout(flyToLocation, 5000); //Test vänta 5 sekunder på att åka till position
+		//const myTimeout = setTimeout(flyToLocation, 5000); //Test vänta 5 sekunder på att åka till position
 		
     </script>    
 </body>
