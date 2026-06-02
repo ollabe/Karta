@@ -312,14 +312,14 @@
 		function checkLocation() {
 		  navigator.geolocation.getCurrentPosition(
 			(position) => {
-			  if (position.coords.accuracy > 70) {
+			  if (position.coords.accuracy > 65) {
 				flyToLocation();
 			  } else {
-				setTimeout(checkLocation, 5000);
+				setTimeout(checkLocation, 2000);
 			  }
 			},
 			(error) => {
-			  setTimeout(checkLocation, 5000);
+			  setTimeout(checkLocation, 2000);
 			}
 		  );
 		}
