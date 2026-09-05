@@ -312,7 +312,7 @@
 		function checkLocation() {
 		  navigator.geolocation.getCurrentPosition(
 			(position) => {
-			  if (position.coords.accuracy > 50) {
+			  if (position.coords.accuracy > 10) {
 				flyToLocation();
 			  } else {
 				setTimeout(checkLocation, 2000);
