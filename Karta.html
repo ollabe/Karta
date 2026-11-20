@@ -1,343 +1,305 @@
-
+<!DOCTYPE html>
 <html lang="sv-se">
 <head>
-    <meta charset="UTF-8
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Test</title>
+  <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
+  <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
-    <title>Test</title>
-    <script src="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Cesium.js"></script>
-    <link href="https://cesium.com/downloads/cesiumjs/releases/1.108/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+    html, body {
+      width: 100%;
+      height: 100dvh; /* Anpassar sig efter mobilens dynamiska adressfält */
+      overflow: hidden;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
 
+    /* Kartan tar upp all ledig yta ovanför bottenpanelen */
+    #cesiumContainer {
+      flex: 1;
+      width: 100%;
+      position: relative;
+      overflow: hidden;
+    }
 
-    <style>
-        #myModal {
-            position: fixed;
-            z-index: 999;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+    /* Mobilanpassad bottenpanel */
+    #sidebar {
+      width: 100%;
+      background: #ffffff;
+      border-top: 1px solid #ccc;
+      padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    }
 
-            #myModal div {
-                width: 100%;
-                max-width: 400px;
-                max-height: 100%;
-                overflow: auto;
-                padding: 30px 24px 24px;
-                background: #fff;
-                position: relative;
-            }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 160px;
+      gap: 4px;
+    }
 
-                #myModal div span {
-                    position: absolute;
-                    top: 0;
-                    right: 0;
-                    font-size: 30px;
-                    font-weight: bold;
-                    cursor: pointer;
-                    width: 46px;
-                    padding: 10px;
-                }
+    .input-group label {
+      color: #000;
+      font-size: 14px;
+      font-weight: 600;
+    }
 
-                #myModal div li {
-                    margin-bottom: 9px;
-                }
+    #myRange {
+      width: 100%;
+      height: 44px; /* Bra storlek för tummen */
+      padding: 8px 12px;
+      font-size: 16px; /* 16px förhindrar auto-zoom på iPhone */
+      border: 1px solid #999;
+      border-radius: 8px;
+    }
 
-        #sliderImg {
-            position: absolute;
-            left: 50%;
-            top: 0px;
-            background-color: #d3d3d3;
-            width: 5px;
-            height: 100%;
-            z-index: 999;
-            display: none;
-        }
+    .button-group {
+      display: flex;
+      gap: 8px;
+      flex: 1 1 auto;
+      justify-content: flex-end;
+    }
 
-            #sliderImg:hover {
-                cursor: ew-resize;
-            }
+    .action-btn {
+      height: 44px;
+      padding: 0 14px;
+      font-size: 15px;
+      font-weight: 600;
+      color: #fff;
+      background-color: #d32f2f;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      white-space: nowrap;
+      touch-action: manipulation;
+    }
 
-        #slidermodel {
-            position: absolute;
-            left: 50%;
-            top: 0px;
-            background-color: #d3d3d3;
-            width: 5px;
-            height: 100%;
-            z-index: 999;
-            display: none;
-        }
+    .action-btn:active {
+      background-color: #b71c1c;
+    }
 
-            #slidermodel:hover {
-                cursor: ew-resize;
-            }
+    /* Anpassning för riktigt smala skärmar */
+    @media (max-width: 480px) {
+      #sidebar {
+        flex-direction: column;
+        align-items: stretch;
+      }
 
-        button {
-            padding: 7px;
-            border: none;
-            border-radius: 75%;
-        }
-		
-		#sidebar {
-		position: fixed;
-		bottom: 0;
-		left: 0;
-		height: 10%;
-		width: 100%;
-		overflow: auto;
-		background: #fff;
-		z-index: 10;
-		}
-		
-		p{color:black;}
-		
-		#myRange {
-		width:70%;
-		height:30%}			
-    </style>
+      .button-group {
+        width: 100%;
+      }
+
+      .action-btn {
+        flex: 1;
+      }
+    }
+  </style>
 </head>
 <body>
-		<div id="sidebar">
 
-		<br />
-        <div class="slidecontainer" style="color: #fff;">
-            <input type="number" min="0" max="400" class="slider" id="myRange">
-            <p>Kompassriktning 0-400: <span id="demo"></span> </p>
-			
-			
-			<button onclick="myFunction()""zoom()" style="
-			color: red;
-			position: absolute;
-			right: 0;
-			top: 0;
-			font-size: large;
-			border-radius: 0;
-			">Ladda om sida</button>
-			
-			
-			<button onclick="zoom()" style="
-			color: red;
-			position: absolute;
-			right: 10%;
-			top: 0;
-			font-size: large;
-			border-radius: 0;
-			">Fullskärm</button>
-			
-        </div>
-        <br />
-		</div>
+  <div id="cesiumContainer"></div>
 
-    <div id="cesiumContainer" class="fullSize">  
-	</div>
-	
-    <script>
-        Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxOTA2NDkzMS0yZmNiLTQ2MjEtOGZmNC1mOWY5MzZkOTZhMTkiLCJpZCI6MjY0NDAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1ODc3MzA4NjV9.U36Gv67LLNRNlrUhOsrJPmGHchC_F9veDISMTc-evqc';
+  <div id="sidebar">
+    <div class="input-group">
+      <label for="myRange">Kompassriktning (0-400): <span id="demo"></span></label>
+      <input type="number" min="0" max="400" inputmode="numeric" class="slider" id="myRange" placeholder="Ange streck (0-400)">
+    </div>
 
-        var viewer = new Cesium.Viewer('cesiumContainer', {
-            shadows: false,
-            geocoder: false,
-            animation: false,
-            timeline: false,
-            scene3DOnly: false,
-            enablePickFeatures: true,
-            baseLayerPicker: true,
-            enableLook: false,
-            enableTranslate: false,
-			enableTilt: false,
-            homeButton: false,
-            fullscreenButton: false,
-            navigationHelpButton: false,
-            shouldAnimate: true,
-            automaticallyTrackDataSourceClocks: false,
-            orderIndependentTranslucency: false,
-            depthTestAgainstTerrain: true,
-            vrButton: true,   
-			sceneMode: Cesium.SceneMode.SCENE2D,
+    <div class="button-group">
+      <button class="action-btn" onclick="toggleFullscreen()">Fullskärm</button>
+      <button class="action-btn" onclick="reloadPage()">Ladda om</button>
+    </div>
+  </div>
+
+  <script>
+    Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiIxOTA2NDkzMS0yZmNiLTQ2MjEtOGZmNC1mOWY5MzZkOTZhMTkiLCJpZCI6MjY0NDAsInNjb3BlcyI6WyJhc3IiLCJnYyJdLCJpYXQiOjE1ODc3MzA4NjV9.U36Gv67LLNRNlrUhOsrJPmGHchC_F9veDISMTc-evqc';
+
+    var viewer = new Cesium.Viewer('cesiumContainer', {
+      shadows: false,
+      geocoder: false,
+      animation: false,
+      timeline: false,
+      scene3DOnly: false,
+      enablePickFeatures: true,
+      baseLayerPicker: true,
+      enableLook: false,
+      enableTranslate: false,
+      enableTilt: false,
+      homeButton: false,
+      fullscreenButton: false,
+      navigationHelpButton: false,
+      shouldAnimate: true,
+      automaticallyTrackDataSourceClocks: false,
+      orderIndependentTranslucency: false,
+      depthTestAgainstTerrain: true,
+      vrButton: false, // Dold på mobil för renare gränssnitt
+      sceneMode: Cesium.SceneMode.SCENE2D,
+    });
+
+    var camera = viewer.scene.camera;
+    if (viewer.scene.moon) {
+      viewer.scene.moon.destroy();
+      viewer.scene.moon = undefined;
+    }
+
+    var shadowMap = viewer.shadowMap;
+    shadowMap.maximumDistance = 3000;
+    shadowMap.size = 4096;
+    shadowMap.darkness = 0.7;
+
+    function cameraLight() {
+      viewer.scene.light = new Cesium.DirectionalLight({
+        direction: new Cesium.Cartesian3()
+      });
+      viewer.scene.preRender.addEventListener(function () {
+        viewer.scene.light.direction = camera.directionWC;
+      });
+    }
+    window.onload = cameraLight;
+
+    function flyToLocation() {
+      if (!navigator.geolocation) return;
+
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var altitude = position.coords.altitude || 0;
+        var heading = position.coords.heading || 0;
+
+        viewer.camera.flyTo({
+          destination: Cesium.Cartesian3.fromDegrees(
+            position.coords.longitude,
+            position.coords.latitude,
+            altitude + 7000
+          ),
+          orientation: {
+            heading: Cesium.Math.toRadians(heading),
+            pitch: Cesium.Math.toRadians(-90),
+          }
         });
 
-        //create variable for scene camera
-        var camera = viewer.scene.camera;
+        viewer.entities.removeById('Här är du');
+        viewer.entities.removeById('2000');
+        viewer.entities.removeById('3500');
 
-       //remove moon
-        viewer.scene.moon.destroy();
-        viewer.scene.moon = undefined;
+        viewer.entities.add({
+          id: 'Här är du',
+          description: "Din nuvarande position",
+          position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
+          point: {
+            show: true,
+            color: Cesium.Color.GREEN,
+            pixelSize: 20,
+            outlineColor: Cesium.Color.BLUE,
+            outlineWidth: 3,
+            heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
+          },
+        });
 
-        //shadow settings
-        var shadowMap = viewer.shadowMap;
-        shadowMap.maximumDistance = 3000;
-        shadowMap.size = 4096;
-        shadowMap.darkness = 0.7;
+        viewer.entities.add({
+          id: "2000",
+          description: "2000m radie",
+          position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
+          ellipsoid: {
+            radii: new Cesium.Cartesian3(2000, 2000, 75),
+            material: Cesium.Color.RED.withAlpha(0.2),
+            outline: false,
+          },
+        });
 
-        //attach light to camera
-        function cameraLight() {
-            viewer.scene.light = new Cesium.DirectionalLight({
-                direction: new Cesium.Cartesian3()
-            });
-            viewer.scene.preRender.addEventListener(function (scene, time) {
-                viewer.scene.light.direction = camera.directionWC;
-            });
-        }
-        onload = cameraLight;
+        viewer.entities.add({
+          id: "3500",
+          description: "3500m radie",
+          position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
+          ellipsoid: {
+            radii: new Cesium.Cartesian3(3500, 3500, 70),
+            material: Cesium.Color.ORANGE.withAlpha(0.2),
+            outline: false,
+          },
+        });
+      });
+    }
 
-		function flyToLocation() { //cesiums funktion för att flyga till en plats
-			navigator.geolocation.getCurrentPosition(fly);		
-			// Create callback for browser's geolocation
-			function fly(position) {
-				viewer.camera.flyTo({
-					destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, (position.coords.altitude + 7000)), // postion.coords.XXXX är den position som webbläsaren läser ut från GPS:en
-					//destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, position.coords.altitude),
-					orientation: {
-						heading: Cesium.Math.toRadians(position.coords.heading),
-						pitch: Cesium.Math.toRadians(-90),
-					}
-				});
+    function reloadPage() {
+      location.reload();
+    }
 
+    // Riktig fullskärmsfunktion (med fallback för iOS)
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(function () {
+          document.body.style.zoom = "100%";
+        });
+      } else if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
 
-				// Nedan är cesiums funktion för att skapa en punkt (i detta fall på GPS:ens plats)
-				viewer.entities.removeById('Här är du'); // ett unikt id för punkten så vi kan "ta bort gammal och sätta in ny" här raderas "gamla" 
-				viewer.entities.removeById('2000');
-				viewer.entities.removeById('3500');
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("demo");
+    output.innerHTML = slider.value;
 
-				viewer.entities.add({
-					id: 'Här är du', // ett unikt id för punkten så vi kan "ta bort gammal och sätta in ny" här skapas nya
-					description: "test",
-					position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2), //platsen för punkten, från webbläsarens GPS:koppling
-					point: {
-						show: true, // default
-						color: Cesium.Color.GREEN, // default: WHITE
-						pixelSize: 20, // default: 1
-						outlineColor: Cesium.Color.BLUE, // default: BLACK
-						outlineWidth: 3, // default: 0
-						heightReference: Cesium.HeightReference.RELATIVE_TO_GROUND,
-					},
-				});
-				
-	
-						
-				viewer.entities.add({
-						id:"2000",
-						description:"2000",
-                        position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
-                        ellipsoid: {
-                            radii: new Cesium.Cartesian3(2000,2000,75),
-                            material: Cesium.Color.RED.withAlpha(0.2),
-                            outline: false,
-                            outlineColor: Cesium.Color.BLACK,
-							
-                        },                      
-                    });
-					
-				viewer.entities.add({
-						id:"3500",
-						description:"3500",
-                        position: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, 2),
-                        ellipsoid: {
-                            radii: new Cesium.Cartesian3(3500,3500,70),
-                            material: Cesium.Color.ORANGE.withAlpha(0.2),
-                            outline: false,
-                            outlineColor: Cesium.Color.BLACK,						
-                        },                      
-                    });	
-			}					
-		}
-		
-			
-		function myFunction(){location.reload();}
-				
-		var slider = document.getElementById("myRange"); 
-		var output = document.getElementById("demo");
-		output.innerHTML = slider.value;
-			
-		slider.onchange = function() {	
-		output.innerHTML = this.value;
-				
-		if (this.value >= 90) {
-		  formula = -Math.abs(parseInt(this.value*0.9)-90);
-		} 
-		else {
-		   formula = -Math.abs(parseInt(-Math.abs(this.value*0.9))-270);
-		}
-		var riktn = formula;
-						
-		function calculateOffset(x, y, distance, angleInDegrees) {
-		  // Convert degrees to radians (Math functions use radians)
-			navigator.geolocation.getCurrentPosition(kompass);
-				  		 		  	
-		  const radians = (angleInDegrees * Math.PI) / 180 ;
-		  console.log(riktn);
-		  // Calculate new coordinates
-		  const newX = x + distance * Math.cos(radians);
-		  const newY = y + distance * Math.sin(radians);
-		
-		  return {
-			x: newX,
-			y: newY
-		  };
-					
-		function kompass(position) {
-		
-		// Example: Starting at (100, 100), move 50 units at 45 degrees
-		const startPoint = { x: position.coords.longitude, y: position.coords.latitude };
-		
-		const offsetPoint = calculateOffset(startPoint.x, startPoint.y, 1, riktn); // 270 är vinkeln ersätt med textparamter 90 är startvärdet för att peka 0 mot norr, därifrån subtraheras kompassvinkeln
-		
-		const yellowLine = viewer.entities.add({
-		  name: "Yellow dashed line with a dash pattern.",
-		  polyline: {
-			positions: Cesium.Cartesian3.fromDegreesArrayHeights([
-			  startPoint.x, startPoint.y, 10, offsetPoint.x, offsetPoint.y, 10,
-			]),
-			width: 5,
-			material: new Cesium.PolylineDashMaterialProperty({
-			  color: Cesium.Color.YELLOW,
-			  dashPattern: parseInt("1010101010101010", 2),
-			}),
-		  },
-		});
-		console.log(offsetPoint);	
-		}
-		}		
-		calculateOffset();
-		}
+    slider.addEventListener("input", function () {
+      output.innerHTML = this.value;
+    });
 
-		function zoom() {
-         document.body.style.zoom = "100%" 
-        }
-		
-		
-		
-		/*
-		function checkLocation() {
-		  navigator.geolocation.getCurrentPosition(		  
-			(position) => {
-			console.log(position.coords.accuracy);
-			  if (position.coords.accuracy >= 5) {
-				setTimeout(flyToLocation(),500);
-			  } else {
-			  console.log(position.coords.accuracy);
-				setTimeout(checkLocation, 2000);
-			  }
-			},
-			(error) => {
-			  setTimeout(checkLocation, 2000);
-			}
-		  );
-		}
+    slider.addEventListener("change", function () {
+      var val = parseFloat(this.value);
+      if (isNaN(val)) return;
 
-		checkLocation();
-		*/
-		flyToLocation();
+      output.innerHTML = val;
+      var formula;
+      if (val >= 90) {
+        formula = -Math.abs(parseInt(val * 0.9) - 90);
+      } else {
+        formula = -Math.abs(parseInt(-Math.abs(val * 0.9)) - 270);
+      }
 
-		
-		//const myTimeout = setTimeout(flyToLocation, 5000); //Test vänta 5 sekunder på att åka till position
-		
-    </script>    
+      navigator.geolocation.getCurrentPosition(function (position) {
+        var startPoint = {
+          x: position.coords.longitude,
+          y: position.coords.latitude
+        };
+
+        var radians = (formula * Math.PI) / 180;
+        var distance = 1;
+        var offsetPoint = {
+          x: startPoint.x + distance * Math.cos(radians),
+          y: startPoint.y + distance * Math.sin(radians)
+        };
+
+        viewer.entities.removeById('kompassLinje');
+        viewer.entities.add({
+          id: 'kompassLinje',
+          name: "Kompassriktning",
+          polyline: {
+            positions: Cesium.Cartesian3.fromDegreesArrayHeights([
+              startPoint.x, startPoint.y, 10,
+              offsetPoint.x, offsetPoint.y, 10,
+            ]),
+            width: 5,
+            material: new Cesium.PolylineDashMaterialProperty({
+              color: Cesium.Color.YELLOW,
+              dashPattern: parseInt("1010101010101010", 2),
+            }),
+          },
+        });
+      });
+    });
+
+    flyToLocation();
+  </script>
 </body>
 </html>
-
