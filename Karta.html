@@ -109,6 +109,7 @@
             <input type="number" min="0" max="400" class="slider" id="myRange">
             <p>Kompassriktning 0-400: <span id="demo"></span> </p>
 			
+			
 			<button onclick="myFunction()""zoom()" style="
 			color: red;
 			position: absolute;
@@ -143,9 +144,9 @@
             geocoder: false,
             animation: false,
             timeline: false,
-            scene3DOnly: true,
+            scene3DOnly: false,
             enablePickFeatures: true,
-            baseLayerPicker: false,
+            baseLayerPicker: true,
             enableLook: false,
             enableTranslate: false,
 			enableTilt: false,
@@ -156,7 +157,8 @@
             automaticallyTrackDataSourceClocks: false,
             orderIndependentTranslucency: false,
             depthTestAgainstTerrain: true,
-            vrButton: true,        
+            vrButton: true,   
+			sceneMode: Cesium.SceneMode.SCENE2D,
         });
 
         //create variable for scene camera
@@ -309,12 +311,16 @@
         }
 		
 		
+		
+		/*
 		function checkLocation() {
-		  navigator.geolocation.getCurrentPosition(
+		  navigator.geolocation.getCurrentPosition(		  
 			(position) => {
-			  if (position.coords.accuracy > 10) {
-				flyToLocation();
+			console.log(position.coords.accuracy);
+			  if (position.coords.accuracy >= 5) {
+				setTimeout(flyToLocation(),500);
 			  } else {
+			  console.log(position.coords.accuracy);
 				setTimeout(checkLocation, 2000);
 			  }
 			},
@@ -325,7 +331,8 @@
 		}
 
 		checkLocation();
-
+		*/
+		flyToLocation();
 
 		
 		//const myTimeout = setTimeout(flyToLocation, 5000); //Test vänta 5 sekunder på att åka till position
@@ -333,5 +340,4 @@
     </script>    
 </body>
 </html>
-
 
