@@ -190,7 +190,7 @@
 			// Create callback for browser's geolocation
 			function fly(position) {
 				viewer.camera.flyTo({
-					destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, (position.coords.altitude + 5000)), // postion.coords.XXXX är den position som webbläsaren läser ut från GPS:en
+					destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, (position.coords.altitude + 7000)), // postion.coords.XXXX är den position som webbläsaren läser ut från GPS:en
 					//destination: Cesium.Cartesian3.fromDegrees(position.coords.longitude, position.coords.latitude, position.coords.altitude),
 					orientation: {
 						heading: Cesium.Math.toRadians(position.coords.heading),
