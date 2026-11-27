@@ -147,20 +147,29 @@
       orderIndependentTranslucency: false,
       depthTestAgainstTerrain: true,
       vrButton: false, // Dold på mobil för renare gränssnitt
-      sceneMode: Cesium.SceneMode.SCENE2D,
+      //sceneMode: Cesium.SceneMode.SCENE2D,
+      
     });
 
+
+    
     var camera = viewer.scene.camera;
     if (viewer.scene.moon) {
       viewer.scene.moon.destroy();
       viewer.scene.moon = undefined;
     }
 
+    viewer.scene.screenSpaceCameraController.enableTilt = false;
+		viewer.scene.screenSpaceCameraController.enableLook = true;
+		viewer.scene.screenSpaceCameraController.enableRotate = false;
+		viewer.scene.screenSpaceCameraController.enableTranslate = true;
+		viewer.scene.screenSpaceCameraController.enableZoom = true;
+    
     var shadowMap = viewer.shadowMap;
     shadowMap.maximumDistance = 3000;
     shadowMap.size = 4096;
     shadowMap.darkness = 0.7;
-
+/*
     function cameraLight() {
       viewer.scene.light = new Cesium.DirectionalLight({
         direction: new Cesium.Cartesian3()
@@ -170,7 +179,7 @@
       });
     }
     window.onload = cameraLight;
-
+*/
     function flyToLocation() {
       if (!navigator.geolocation) return;
 
